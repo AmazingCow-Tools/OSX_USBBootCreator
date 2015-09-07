@@ -54,15 +54,49 @@ except:
     def colored(msg, color):
         return msg;
 
-# TEMP_DISKUTIL_LIST = "/tmp/linux_usb_diskutil/listdisk.plist";
+
+################################################################################
+## Helper Classes                                                             ##
+################################################################################
 class Constants:
-    TEMP_DISKUTIL_DIR  = os.path.expanduser("~/Desktop/linux_usb_diskutil/");
+    #Temp paths.
+    TEMP_DISKUTIL_DIR  = os.path.expanduser("/tmp/linux_usb_diskutil/");
     TEMP_DISKUTIL_LIST = os.path.join(TEMP_DISKUTIL_DIR, "listdisk.plist");
+    #Exts
     SUPPORTED_EXTS     = ".img", ".iso";
 
+    #Flags.
+    ALL_FLAGS_SHORT = "hviV";
+    ALL_FLAGS_LONG  = ["help",
+                       "version",
+                       "interactive",
+                       "verbose",
+                       "disk=",
+                       "image="];
+
+    FLAG_HELP        = "h", "help";
+    FLAG_VERSION     = "v", "version";
+    FLAG_INTERACTIVE = "i", "interactive";
+    FLAG_VERBOSE     = "V", "verbose";
+    FLAG_DISK        =      "disk";
+    FLAG_IMG         =      "image";
+
+    #App
+    APP_NAME      = "usb-boot-creator";
+    APP_VERSION   = "0.1.0";
+    APP_AUTHOR    = "N2OMatt <n2omatt@amazingcow.com>"
+    APP_COPYRIGHT = "\n".join(("Copyright (c) 2015 - Amazing Cow",
+                               "This is a free software (GPLv3) - Share/Hack it",
+                               "Check opensource.amazingcow.com for more :)"));
+
 class Globals:
-    verbose    = True;
-    disks_info = None;
+    disks_info  = None;
+
+    verbose     = False;
+    interactive = False;
+
+    disk_name = None;
+    img_path  = None;
 
 class Log:
     @staticmethod
@@ -74,6 +108,38 @@ class Log:
     def verbose(msg):
         if(Globals.verbose):
             print colored(msg, "magenta");
+
+    @staticmethod
+    def show_help():
+        msg = "Usage:" +"""
+usb-boot-creator [-hv] [-i] [-V] [--disk <name> --image <path>]
+
+Options:
+ *-h --help           : Show this screen.
+ *-v --version        : Show app version and copyright.
+ *-i --interactive    : Runs in interactive (safer?) mode. Verbose is assumed.
+  -V --verbose        : Verbose mode, show more helpful output.
+     --disk <name>    : The name of the disk (without the path).
+     --image <path>   : The path of .img (If .iso is passed it will be converted).
+
+Notes:
+  TAKE A LOT OF CARE, you will need perform dd(1) as superuser, so double
+  check your disk name before do anything stupid.
+
+  Options marked with * are exclusive, i.e. the usb-boot-creator will run that
+  and exit successfully after the operation.
+  """;
+        print msg;
+        exit(0);
+
+    @staticmethod
+    def show_version():
+        print "{} - {} - {}".format(Constants.APP_NAME,
+                                    Constants.APP_VERSION,
+                                    Constants.APP_AUTHOR);
+        print Constants.APP_COPYRIGHT;
+        print;
+        exit(0);
 
 ################################################################################
 ## Helper Functions                                                           ##
@@ -200,19 +266,63 @@ def get_img_filename():
 ## Script Initialization                                                      ##
 ################################################################################
 def main():
-    img_path = get_img_filename();
+    #Get the command line options.
+    try:
+        options = getopt.gnu_getopt(sys.argv[1:],
+                                    Constants.ALL_FLAGS_SHORT,
+                                    Constants.ALL_FLAGS_LONG);
+    except Exception, e:
+        Log.fatal(e);
 
+
+    #Parse the options.
+    for key, value in options[0]:
+        key = key.lstrip("-");
+
+        #Help and Version flags - Exclusives run and quit.
+        if(key in Constants.FLAG_HELP):
+            Log.show_help();
+        if(key in Constants.FLAG_VERSION):
+            Log.show_version();
+
+        #Interactive mode - Verbose is assumed, all other
+        #flags are ignored.
+        if(key in Constants.FLAG_INTERACTIVE):
+            Globals.verbose     = True;
+            Globals.interactive = True;
+            break; #Go out of loop.
+
+        #Non interactive mode...
+        if(key in Constants.FLAG_VERBOSE):
+            Globals.verbose = True;
+        #Disk and img path.
+        if(key in Constants.FLAG_DISK):
+            Globals.disk_name = value;
+        if(key in Constants.FLAG_IMG):
+            Globals.img_path = value;
+
+
+    #Start the program...
     generate_disktutil_list();
-    print_disk_list();
-    disk_name = get_disk_to_use();
 
-    if(check_disk_existance(disk_name) == False):
-        msg = "Disk ({}) is not a valid disk.".format(disk_name);
+    #Perform the interactive actions...
+    if(Globals.interactive):
+        Globals.img_path = get_img_filename();
+        print_disk_list();
+        Globals.disk_name = get_disk_to_use();
+
+    #Check if disk name is valid.
+    if(check_disk_existance(Globals.disk_name) == False):
+        msg = "Disk ({}) is not a valid disk.".format(Globals.disk_name);
         Log.fatal(msg);
 
-    unmount_disk(disk_name);
-    perform_dd(img_path, disk_name);
-    eject_disk(disk_name);
+    #Check if image path is valid.
+    Globals.img_path = check_image_path(Globals.img_path);
+
+
+    unmount_disk(Globals.disk_name);
+    perform_dd(Globals.img_path, Globals.disk_name);
+    eject_disk(Globals.disk_name);
 
 if __name__ == '__main__':
     main();
