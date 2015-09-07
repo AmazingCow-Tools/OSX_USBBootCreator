@@ -274,6 +274,10 @@ def main():
     except Exception, e:
         Log.fatal(e);
 
+    #Show help if no flags...
+    if(len(options[0]) == 0):
+        Log.show_help();
+
 
     #Parse the options.
     for key, value in options[0]:
