@@ -1,0 +1,5 @@
+#1 - Refactor the helper functions arguments.
+     We're passing the arguments but them are already
+     at Globals.the_param_name.
+#2 - Provide better error handling.
+#3 - Show more useful output at the commit time.

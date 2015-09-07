@@ -1,0 +1,6 @@
+version 0.1:
+[Set 07 2015] - Finish the basic implementation.
+                usb-boot-creator can run in both interactive and
+                non-interactive modes.
+
+
