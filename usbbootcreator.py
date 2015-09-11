@@ -115,12 +115,12 @@ class Log:
 usb-boot-creator [-hv] [-i] [-V] [--disk <name> --image <path>]
 
 Options:
- *-h --help           : Show this screen.
- *-v --version        : Show app version and copyright.
- *-i --interactive    : Runs in interactive (safer?) mode. Verbose is assumed.
-  -V --verbose        : Verbose mode, show more helpful output.
-     --disk <name>    : The name of the disk (without the path).
-     --image <path>   : The path of .img (If .iso is passed it will be converted).
+ *-h --help         : Show this screen.
+ *-v --version      : Show app version and copyright.
+ *-i --interactive  : Runs in interactive (safer?) mode. Verbose is assumed.
+  -V --verbose      : Verbose mode, show more helpful output.
+     --disk  <name> : The name of the disk (without the path).
+     --image <path> : The path of .img (If .iso is passed it will be converted).
 
 Notes:
   TAKE A LOT OF CARE, you will need perform dd(1) as superuser, so double
