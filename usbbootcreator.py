@@ -6,7 +6,7 @@
 ##             ██        ██                                                   ##
 ##            ███  █  █  ███                                                  ##
 ##            █ █        █ █        usbbootcreator.py                         ##
-##             ████████████         Linux USB Boot Craetor                    ##
+##             ████████████         Linux USB Boot Creator                    ##
 ##           █              █       Copyright (c) 2015 AmazingCow             ##
 ##          █     █    █     █      www.AmazingCow.com                        ##
 ##          █     █    █     █                                                ##
@@ -141,6 +141,7 @@ Notes:
         print;
         exit(0);
 
+
 ################################################################################
 ## Helper Functions                                                           ##
 ################################################################################
@@ -232,6 +233,7 @@ def perform_dd(img_path, disk_name):
     checked_os_system(dd_cmd);
 
     Log.verbose("dd done...");
+
 
 ################################################################################
 ## Print Functions                                                            ##
