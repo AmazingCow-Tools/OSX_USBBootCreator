@@ -3,4 +3,10 @@ version 0.1:
                 usb-boot-creator can run in both interactive and
                 non-interactive modes.
 
+version 0.1.1:
+[Set 24 2015] - Fix bug, we were passing wrong parameters
+                for Log.fatal function.
+                Change the makefile to copy (cp) instead of
+                make a link (ln).
+
 

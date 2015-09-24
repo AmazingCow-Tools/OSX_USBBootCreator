@@ -83,7 +83,7 @@ class Constants:
 
     #App
     APP_NAME      = "usb-boot-creator";
-    APP_VERSION   = "0.1.0";
+    APP_VERSION   = "0.1.1";
     APP_AUTHOR    = "N2OMatt <n2omatt@amazingcow.com>"
     APP_COPYRIGHT = "\n".join(("Copyright (c) 2015 - Amazing Cow",
                                "This is a free software (GPLv3) - Share/Hack it",
@@ -147,7 +147,7 @@ Notes:
 def checked_os_system(cmd, expected_ret = 0):
     ret_val = os.system(cmd);
     if(ret_val != expected_ret):
-        Log.fatal("cmd: ({}) has exit status ({})", cmd, ret_val);
+        Log.fatal("cmd: ({}) has exit status ({})".format(cmd, ret_val));
 
 def generate_disktutil_list():
     checked_os_system("mkdir -p {}".format(Constants.TEMP_DISKUTIL_DIR));
