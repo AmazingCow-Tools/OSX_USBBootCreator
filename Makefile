@@ -41,7 +41,7 @@
 
 install:
 	cp -f ./usbbootcreator.py /usr/local/bin/usb-boot-creator
-	chmod 744 /usr/local/bin/usb-boot-creator
+	chmod 755 /usr/local/bin/usb-boot-creator
 
 uninstall:
 	rm -f /usr/local/bin/usb-boot-creator
