@@ -9,4 +9,12 @@ version 0.1.1:
                 Change the makefile to copy (cp) instead of
                 make a link (ln).
 
-
+version 0.1.2 
+[Jan 26 2016] - Update the license headers.
+                Add the "comments separators" on README.
+                Update the name of project on README.
+                Fix some spacement issues on README.
+                Add some comments on usbbootcreator.py
+                Change the path of temp folder.
+                Update the version output.
+                Fix some spacement issues on usbbootcreator.py

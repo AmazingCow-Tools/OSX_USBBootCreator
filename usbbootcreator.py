@@ -4,15 +4,14 @@
 ##               █      █                                                     ##
 ##               ████████                                                     ##
 ##             ██        ██                                                   ##
-##            ███  █  █  ███                                                  ##
-##            █ █        █ █        usbbootcreator.py                         ##
-##             ████████████         Linux USB Boot Creator                    ##
-##           █              █       Copyright (c) 2015 AmazingCow             ##
-##          █     █    █     █      www.AmazingCow.com                        ##
+##            ███  █  █  ███        usbbootcreator.py                         ##
+##            █ █        █ █        OSX USBBootCreator                        ##
+##             ████████████                                                   ##
+##           █              █       Copyright (c) 2015, 2016                  ##
+##          █     █    █     █      AmazingCow - www.AmazingCow.com           ##
 ##          █     █    █     █                                                ##
 ##           █              █       N2OMatt - n2omatt@amazingcow.com          ##
 ##             ████████████         www.amazingcow.com/n2omatt                ##
-##                                                                            ##
 ##                                                                            ##
 ##                  This software is licensed as GPLv3                        ##
 ##                 CHECK THE COPYING FILE TO MORE DETAILS                     ##
@@ -29,9 +28,9 @@
 ##        (See opensource.AmazingCow.com/acknowledgment.html for details).    ##
 ##        If you will not acknowledge, just send us a email. We'll be         ##
 ##        *VERY* happy to see our work being used by other people. :)         ##
-##        The email is: acknowledgmentopensource@AmazingCow.com               ##
+##        The email is: acknowledgment_opensource@AmazingCow.com              ##
 ##     3. Altered source versions must be plainly marked as such,             ##
-##        and must notbe misrepresented as being the original software.       ##
+##        and must not be misrepresented as being the original software.      ##
 ##     4. This notice may not be removed or altered from any source           ##
 ##        distribution.                                                       ##
 ##     5. Most important, you must have fun. ;)                               ##
@@ -47,6 +46,9 @@ import os.path;
 import getopt;
 import sys;
 import plistlib;
+
+#Since termcolor isn't a standard package do not force the user to have it.
+#But print a *nice* message about the lost features :)
 try:
     from termcolor import colored;
 except:
@@ -60,7 +62,7 @@ except:
 ################################################################################
 class Constants:
     #Temp paths.
-    TEMP_DISKUTIL_DIR  = os.path.expanduser("/tmp/linux_usb_diskutil/");
+    TEMP_DISKUTIL_DIR  = os.path.expanduser("/tmp/osx_usb_diskutil/");
     TEMP_DISKUTIL_LIST = os.path.join(TEMP_DISKUTIL_DIR, "listdisk.plist");
     #Exts
     SUPPORTED_EXTS     = ".img", ".iso";
@@ -83,11 +85,12 @@ class Constants:
 
     #App
     APP_NAME      = "usb-boot-creator";
-    APP_VERSION   = "0.1.1";
+    APP_VERSION   = "0.1.2";
     APP_AUTHOR    = "N2OMatt <n2omatt@amazingcow.com>"
-    APP_COPYRIGHT = "\n".join(("Copyright (c) 2015 - Amazing Cow",
+    APP_COPYRIGHT = "\n".join(("Copyright (c) 2015, 2016 - Amazing Cow",
                                "This is a free software (GPLv3) - Share/Hack it",
                                "Check opensource.amazingcow.com for more :)"));
+
 
 class Globals:
     disks_info  = None;
@@ -97,6 +100,7 @@ class Globals:
 
     disk_name = None;
     img_path  = None;
+
 
 class Log:
     @staticmethod
@@ -150,6 +154,7 @@ def checked_os_system(cmd, expected_ret = 0):
     if(ret_val != expected_ret):
         Log.fatal("cmd: ({}) has exit status ({})".format(cmd, ret_val));
 
+
 def generate_disktutil_list():
     checked_os_system("mkdir -p {}".format(Constants.TEMP_DISKUTIL_DIR));
     checked_os_system("diskutil list -plist > {}".format(Constants.TEMP_DISKUTIL_LIST));
@@ -171,6 +176,7 @@ def generate_disktutil_list():
 
         Globals.disks_info.append(info);
 
+
 def convert_iso_to_img(isopath):
     Log.verbose("Image File is a .iso it will be converted first");
 
@@ -189,11 +195,13 @@ def convert_iso_to_img(isopath):
 
     return outpath;
 
+
 def check_disk_existance(disk_name):
     for info in Globals.disks_info:
         if(disk_name == info["whole"]):
             return True;
     return False;
+
 
 def check_image_path(path):
     fullpath = os.path.abspath(os.path.expanduser(path));
@@ -212,15 +220,18 @@ def check_image_path(path):
 
     return fullpath;
 
+
 def unmount_disk(disk_name):
     disk_path = "/dev/" + disk_name;
     Log.verbose("Unmount disk ({})".format(disk_path));
     checked_os_system("diskutil unmountDisk {}".format(disk_path));
 
+
 def eject_disk(disk_name):
     disk_path = "/dev/" + disk_name;
     Log.verbose("Eject disk ({})".format(disk_path));
     checked_os_system("diskutil eject {}".format(disk_path));
+
 
 def perform_dd(img_path, disk_name):
     disk_path = "/dev/r" + disk_name;
@@ -253,6 +264,7 @@ def print_disk_list():
 def get_disk_to_use():
     print colored("Which disk is to use:", "yellow");
     return raw_input();
+
 
 def get_img_filename():
     print colored("Path for linux .img (If a .iso is passed it will be converted):",
