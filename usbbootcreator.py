@@ -40,6 +40,8 @@
 ##                                  Enjoy :)                                  ##
 ##----------------------------------------------------------------------------##
 
+#COWTODO: Change the termcolor to cowtermcolor.
+
 ## Imports ##
 import os;
 import os.path;
